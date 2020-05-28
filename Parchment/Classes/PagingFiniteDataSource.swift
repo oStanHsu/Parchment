@@ -32,4 +32,18 @@ class PagingFiniteDataSource: PagingViewControllerInfiniteDataSource {
     }
     return nil
   }
+
+  func pagingViewController(_ pagingViewController: PagingViewController, viewControllerBefore pagingItem: PagingItem) -> UIViewController? {
+    guard let beforeItem = self.pagingViewController(pagingViewController, itemBefore: pagingItem) else {
+        return nil
+    }
+    return self.pagingViewController(pagingViewController, viewControllerFor: beforeItem)
+  }
+
+  func pagingViewController(_ pagingViewController: PagingViewController, viewControllerAfter pagingItem: PagingItem) -> UIViewController? {
+    guard let afterItem = self.pagingViewController(pagingViewController, itemAfter: pagingItem) else {
+        return nil
+    }
+    return self.pagingViewController(pagingViewController, viewControllerFor: afterItem)
+  }
 }

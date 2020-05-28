@@ -38,4 +38,9 @@ public protocol PagingViewControllerInfiniteDataSource: class {
   /// `PagingItem`, or `nil` to indicate that no more progress can be
   /// made in that direction.
   func pagingViewController(_ : PagingViewController, itemAfter pagingItem: PagingItem) -> PagingItem?
+
+    // custom
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerBefore pagingItem: PagingItem) -> UIViewController?
+
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerAfter pagingItem: PagingItem) -> UIViewController?
 }

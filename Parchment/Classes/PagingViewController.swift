@@ -652,18 +652,20 @@ open class PagingViewController:
     guard
       let dataSource = infiniteDataSource,
       let currentPagingItem = state.currentPagingItem,
-      let pagingItem = dataSource.pagingViewController(self, itemBefore: currentPagingItem) else { return nil }
-    
-    return dataSource.pagingViewController(self, viewControllerFor: pagingItem)
+      let viewController = dataSource.pagingViewController(self, viewControllerBefore: currentPagingItem) else {
+        return nil
+    }
+    return viewController
   }
   
   open func em_pageViewController(_ pageViewController: EMPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
     guard
       let dataSource = infiniteDataSource,
       let currentPagingItem = state.currentPagingItem,
-      let pagingItem = dataSource.pagingViewController(self, itemAfter: currentPagingItem) else { return nil }
-    
-    return dataSource.pagingViewController(self, viewControllerFor: pagingItem)
+      let viewController = dataSource.pagingViewController(self, viewControllerAfter: currentPagingItem) else {
+          return nil
+      }
+      return viewController
   }
   
   // MARK: EMPageViewControllerDelegate

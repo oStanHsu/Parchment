@@ -37,7 +37,7 @@ class CalendarViewController: UIViewController {
     view.addSubview(pagingViewController.view)
     view.constrainToEdges(pagingViewController.view)
     pagingViewController.didMove(toParent: self)
-    
+
     // Set our custom data source
     pagingViewController.infiniteDataSource = self
     
@@ -70,5 +70,18 @@ extension CalendarViewController: PagingViewControllerInfiniteDataSource {
     let formattedDate = DateFormatters.shortDateFormatter.string(from: calendarItem.date)
     return ContentViewController(title: formattedDate)
   }
-  
+
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerBefore pagingItem: PagingItem) -> UIViewController? {
+      guard let beforeItem = self.pagingViewController(pagingViewController, itemBefore: pagingItem) else {
+          return nil
+      }
+      return self.pagingViewController(pagingViewController, viewControllerFor: beforeItem)
+    }
+
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerAfter pagingItem: PagingItem) -> UIViewController? {
+      guard let afterItem = self.pagingViewController(pagingViewController, itemAfter: pagingItem) else {
+          return nil
+      }
+      return self.pagingViewController(pagingViewController, viewControllerFor: afterItem)
+    }
 }
