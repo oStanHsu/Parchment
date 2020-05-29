@@ -37,7 +37,7 @@ class CalendarViewController: UIViewController {
     view.addSubview(pagingViewController.view)
     view.constrainToEdges(pagingViewController.view)
     pagingViewController.didMove(toParent: self)
-    
+
     // Set our custom data source
     pagingViewController.infiniteDataSource = self
     
@@ -55,12 +55,12 @@ class CalendarViewController: UIViewController {
 // controller will show one menu item for each day.
 extension CalendarViewController: PagingViewControllerInfiniteDataSource {
   
-  func pagingViewController(_: PagingViewController, itemAfter pagingItem: PagingItem) -> PagingItem? {
+  func pagingViewController(_: PagingViewController, itemAfter pagingItem: PagingItem, isGenerateLayout: Bool) -> PagingItem? {
     let calendarItem = pagingItem as! CalendarItem
     return CalendarItem(date: calendarItem.date.addingTimeInterval(86400))
   }
   
-  func pagingViewController(_: PagingViewController, itemBefore pagingItem: PagingItem) -> PagingItem? {
+  func pagingViewController(_: PagingViewController, itemBefore pagingItem: PagingItem, isGenerateLayout: Bool) -> PagingItem? {
     let calendarItem = pagingItem as! CalendarItem
     return CalendarItem(date: calendarItem.date.addingTimeInterval(-86400))
   }
@@ -70,5 +70,18 @@ extension CalendarViewController: PagingViewControllerInfiniteDataSource {
     let formattedDate = DateFormatters.shortDateFormatter.string(from: calendarItem.date)
     return ContentViewController(title: formattedDate)
   }
-  
+
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerBefore pagingItem: PagingItem) -> UIViewController? {
+      guard let beforeItem = self.pagingViewController(pagingViewController, itemBefore: pagingItem, isGenerateLayout: true) else {
+          return nil
+      }
+      return self.pagingViewController(pagingViewController, viewControllerFor: beforeItem)
+    }
+
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerAfter pagingItem: PagingItem) -> UIViewController? {
+      guard let afterItem = self.pagingViewController(pagingViewController, itemAfter: pagingItem, isGenerateLayout: true) else {
+          return nil
+      }
+      return self.pagingViewController(pagingViewController, viewControllerFor: afterItem)
+    }
 }

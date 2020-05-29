@@ -17,7 +17,16 @@ class BasicViewController: UIViewController {
       ContentViewController(index: 0),
       ContentViewController(index: 1),
       ContentViewController(index: 2),
-      ContentViewController(index: 3)
+      ContentViewController(index: 3),
+      ContentViewController(index: 4),
+      ContentViewController(index: 5),
+      ContentViewController(index: 6),
+      ContentViewController(index: 7),
+      ContentViewController(index: 8),
+      ContentViewController(index: 9),
+      ContentViewController(index: 10),
+      ContentViewController(index: 11),
+      ContentViewController(index: 12)
     ]
     
     let pagingViewController = PagingViewController(viewControllers: viewControllers)

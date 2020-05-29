@@ -12,7 +12,8 @@ public enum PagingState: Equatable {
     upcomingPagingItem: PagingItem?,
     progress: CGFloat,
     initialContentOffset: CGPoint,
-    distance: CGFloat)
+    distance: CGFloat,
+    upcomingOtherPagingItem: PagingItem?)
 }
 
 public extension PagingState {
@@ -21,7 +22,7 @@ public extension PagingState {
     switch self {
     case .empty:
       return nil
-    case let .scrolling(pagingItem, _, _, _, _):
+    case let .scrolling(pagingItem, _, _, _, _, _):
       return pagingItem
     case let .selected(pagingItem):
       return pagingItem
@@ -32,7 +33,7 @@ public extension PagingState {
     switch self {
     case .empty:
       return nil
-    case let .scrolling(_, upcomingPagingItem, _, _, _):
+    case let .scrolling(_, upcomingPagingItem, _, _, _, _):
       return upcomingPagingItem
     case .selected:
       return nil
@@ -41,7 +42,7 @@ public extension PagingState {
   
   var progress: CGFloat {
     switch self {
-    case let .scrolling(_, _, progress, _, _):
+    case let .scrolling(_, _, progress, _, _, _):
       return progress
     case .selected, .empty:
       return 0
@@ -50,7 +51,7 @@ public extension PagingState {
   
   var distance: CGFloat {
     switch self {
-    case let .scrolling(_, _, _, _, distance):
+    case let .scrolling(_, _, _, _, distance, _):
       return distance
     case .selected, .empty:
       return 0
@@ -70,8 +71,8 @@ public extension PagingState {
 public func ==(lhs: PagingState, rhs: PagingState) -> Bool {
   switch (lhs, rhs) {
   case
-    (let .scrolling(lhsCurrent, lhsUpcoming, lhsProgress, lhsOffset, lhsDistance),
-     let .scrolling(rhsCurrent, rhsUpcoming, rhsProgress, rhsOffset, rhsDistance)):
+    (let .scrolling(lhsCurrent, lhsUpcoming, lhsProgress, lhsOffset, lhsDistance, _),
+     let .scrolling(rhsCurrent, rhsUpcoming, rhsProgress, rhsOffset, rhsDistance, _)):
     if lhsCurrent.isEqual(to: rhsCurrent) &&
       lhsProgress == rhsProgress &&
       lhsOffset == rhsOffset &&

@@ -652,18 +652,20 @@ open class PagingViewController:
     guard
       let dataSource = infiniteDataSource,
       let currentPagingItem = state.currentPagingItem,
-      let pagingItem = dataSource.pagingViewController(self, itemBefore: currentPagingItem) else { return nil }
-    
-    return dataSource.pagingViewController(self, viewControllerFor: pagingItem)
+      let viewController = dataSource.pagingViewController(self, viewControllerBefore: currentPagingItem) else {
+        return nil
+    }
+    return viewController
   }
   
   open func em_pageViewController(_ pageViewController: EMPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
     guard
       let dataSource = infiniteDataSource,
       let currentPagingItem = state.currentPagingItem,
-      let pagingItem = dataSource.pagingViewController(self, itemAfter: currentPagingItem) else { return nil }
-    
-    return dataSource.pagingViewController(self, viewControllerFor: pagingItem)
+      let viewController = dataSource.pagingViewController(self, viewControllerAfter: currentPagingItem) else {
+          return nil
+      }
+      return viewController
   }
   
   // MARK: EMPageViewControllerDelegate
@@ -727,12 +729,12 @@ open class PagingViewController:
 
 extension PagingViewController: PagingMenuDataSource {
   
-  public func pagingItemBefore(pagingItem: PagingItem) -> PagingItem? {
-    return infiniteDataSource?.pagingViewController(self, itemBefore: pagingItem)
+  public func pagingItemBefore(pagingItem: PagingItem, isGenerateLayout: Bool) -> PagingItem? {
+    return infiniteDataSource?.pagingViewController(self, itemBefore: pagingItem, isGenerateLayout: isGenerateLayout)
   }
   
-  public func pagingItemAfter(pagingItem: PagingItem) -> PagingItem? {
-    return infiniteDataSource?.pagingViewController(self, itemAfter: pagingItem)
+  public func pagingItemAfter(pagingItem: PagingItem, isGenerateLayout: Bool) -> PagingItem? {
+    return infiniteDataSource?.pagingViewController(self, itemAfter: pagingItem, isGenerateLayout: isGenerateLayout)
   }
   
 }

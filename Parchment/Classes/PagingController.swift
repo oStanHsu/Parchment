@@ -102,7 +102,8 @@ final class PagingController: NSObject {
             upcomingPagingItem: pagingItem,
             progress: 0,
             initialContentOffset: transition.contentOffset,
-            distance: transition.distance
+            distance: transition.distance,
+            upcomingOtherPagingItem: nil
           )
           
           let direction = visibleItems.direction(
@@ -127,11 +128,14 @@ final class PagingController: NSObject {
     switch state {
     case let .selected(pagingItem):
       var upcomingItem: PagingItem?
+      var upcomingOtherPagingItem: PagingItem?
       
       if progress > 0 {
-        upcomingItem = dataSource?.pagingItemAfter(pagingItem: pagingItem)
+        upcomingItem = dataSource?.pagingItemAfter(pagingItem: pagingItem, isGenerateLayout: true)
+        upcomingOtherPagingItem = dataSource?.pagingItemAfter(pagingItem: pagingItem, isGenerateLayout: false)
       } else if progress < 0 {
-        upcomingItem = dataSource?.pagingItemBefore(pagingItem: pagingItem)
+        upcomingItem = dataSource?.pagingItemBefore(pagingItem: pagingItem, isGenerateLayout: true)
+        upcomingOtherPagingItem = dataSource?.pagingItemBefore(pagingItem: pagingItem, isGenerateLayout: false)
       } else {
         return
       }
@@ -143,10 +147,11 @@ final class PagingController: NSObject {
         upcomingPagingItem: upcomingItem,
         initialContentOffset: transition.contentOffset,
         distance: transition.distance,
-        progress: progress
+        progress: progress,
+        upcomingOtherPagingItem: upcomingOtherPagingItem
       )
       
-    case let .scrolling(pagingItem, upcomingPagingItem, oldProgress, initialContentOffset, distance):
+    case let .scrolling(pagingItem, upcomingPagingItem, oldProgress, initialContentOffset, distance, upcomingOtherPagingItem):
       if oldProgress < 0 && progress > 0 {
         state = .selected(pagingItem: pagingItem)
       } else if oldProgress > 0 && progress < 0 {
@@ -159,7 +164,8 @@ final class PagingController: NSObject {
           upcomingPagingItem: upcomingPagingItem,
           initialContentOffset: initialContentOffset,
           distance: distance,
-          progress: progress
+          progress: progress,
+          upcomingOtherPagingItem: upcomingOtherPagingItem
         )
       }
       
@@ -169,8 +175,8 @@ final class PagingController: NSObject {
   }
   
   func contentFinishedScrolling() {
-    guard case let .scrolling(pagingItem, upcomingPagingItem, _, _, _) = state else { return }
-    
+    guard case let .scrolling(pagingItem, upcomingPagingItem, _, _, _, upcomingOtherPagingItem) = state else { return }
+
     // If a transition finishes scrolling, but the upcoming paging
     // item is nil it means that the user scrolled away from one of
     // the items at the very edge. In this case, we don't want to
@@ -192,13 +198,29 @@ final class PagingController: NSObject {
         )
       }
     } else {
-      state = .selected(pagingItem: pagingItem)
+        if let upcomingOtherPagingItem = upcomingOtherPagingItem {
+            state = .selected(pagingItem: upcomingOtherPagingItem)
+
+            // We only want to select the current paging item
+            // if the user is not scrolling the collection view.
+            if collectionView.isDragging == false {
+              reloadItems(around: upcomingOtherPagingItem)
+              collectionView.selectItem(
+                at: visibleItems.indexPath(for: upcomingOtherPagingItem),
+                animated: true, // options.menuTransition == .animateAfter,
+                scrollPosition: options.scrollPosition
+              )
+            }
+
+        } else {
+            state = .selected(pagingItem: pagingItem)
+        }
     }
   }
   
   func transitionSize() {
     switch state {
-    case let .scrolling(pagingItem, _, _, _, _):
+    case let .scrolling(pagingItem, _, _, _, _, _):
       sizeCache.clear()
       state = .selected(pagingItem: pagingItem)
       reloadItems(around: pagingItem)
@@ -232,7 +254,7 @@ final class PagingController: NSObject {
   
   func viewAppeared() {
     switch state {
-    case let .selected(pagingItem), let .scrolling(_, pagingItem?, _, _, _):
+    case let .selected(pagingItem), let .scrolling(_, pagingItem?, _, _, _, _):
       state = .selected(pagingItem: pagingItem)
       reloadItems(around: pagingItem)
       
@@ -389,9 +411,9 @@ final class PagingController: NSObject {
     var upcomingPagingItem: PagingItem? = nil
     
     if recognizer.direction.contains(.left) {
-      upcomingPagingItem = dataSource?.pagingItemAfter(pagingItem: currentPagingItem)
+      upcomingPagingItem = dataSource?.pagingItemAfter(pagingItem: currentPagingItem, isGenerateLayout: true)
     } else if recognizer.direction.contains(.right) {
-      upcomingPagingItem = dataSource?.pagingItemBefore(pagingItem: currentPagingItem)
+      upcomingPagingItem = dataSource?.pagingItemBefore(pagingItem: currentPagingItem, isGenerateLayout: true)
     }
     
     if let pagingItem = upcomingPagingItem {
@@ -404,7 +426,8 @@ final class PagingController: NSObject {
     upcomingPagingItem: PagingItem?,
     initialContentOffset: CGPoint,
     distance: CGFloat,
-    progress: CGFloat
+    progress: CGFloat,
+    upcomingOtherPagingItem: PagingItem?
     ) {
     
     state = .scrolling(
@@ -412,7 +435,8 @@ final class PagingController: NSObject {
       upcomingPagingItem: upcomingPagingItem,
       progress: progress,
       initialContentOffset: initialContentOffset,
-      distance: distance
+      distance: distance,
+      upcomingOtherPagingItem: upcomingOtherPagingItem
     )
     
     if options.menuTransition == .scrollAlongside {
@@ -435,7 +459,9 @@ final class PagingController: NSObject {
         if sizeCache.implementsWidthDelegate {
           invalidationContext.invalidateSizes = true
         }
-      }
+      } else {
+        print("upcomingPagingItem != nil")
+        }
       
       collectionViewLayout.invalidateLayout(with: invalidationContext)
     }
@@ -531,7 +557,7 @@ final class PagingController: NSObject {
     // wrong. For instance, when hitting the edge of the collection view
     // while transitioning we need to reload all the paging items and
     // update the transition data.
-    if case let .scrolling(pagingItem, upcomingPagingItem, progress, _, distance) = state {
+    if case let .scrolling(pagingItem, upcomingPagingItem, progress, _, distance, upcomingOtherPagingItem) = state {
       let transition = calculateTransition(
         from: pagingItem,
         to: upcomingPagingItem
@@ -548,7 +574,8 @@ final class PagingController: NSObject {
         upcomingPagingItem: upcomingPagingItem,
         progress: progress,
         initialContentOffset: newContentOffset,
-        distance: distance
+        distance: distance,
+        upcomingOtherPagingItem: upcomingOtherPagingItem
       )
     }
   }
@@ -563,7 +590,7 @@ final class PagingController: NSObject {
     // fill up the same width as the bounds.
     var widthBefore: CGFloat = menuWidth
     while widthBefore > 0 {
-      if let item = dataSource?.pagingItemBefore(pagingItem: previousItem) {
+      if let item = dataSource?.pagingItemBefore(pagingItem: previousItem, isGenerateLayout: true) {
         widthBefore -= itemWidth(for: item)
         widthBefore -= options.menuItemSpacing
         previousItem = item
@@ -577,7 +604,7 @@ final class PagingController: NSObject {
     // include any remaining space left before the current item.
     var widthAfter: CGFloat = menuWidth + widthBefore
     while widthAfter > 0 {
-      if let item = dataSource?.pagingItemAfter(pagingItem: nextItem) {
+      if let item = dataSource?.pagingItemAfter(pagingItem: nextItem, isGenerateLayout: true) {
         widthAfter -= itemWidth(for: item)
         widthAfter -= options.menuItemSpacing
         nextItem = item
@@ -591,7 +618,7 @@ final class PagingController: NSObject {
     // space available after filling items items after the current.
     var remainingWidth = widthAfter
     while remainingWidth > 0 {
-      if let item = dataSource?.pagingItemBefore(pagingItem: previousItem) {
+      if let item = dataSource?.pagingItemBefore(pagingItem: previousItem, isGenerateLayout: true) {
         remainingWidth -= itemWidth(for: item)
         remainingWidth -= options.menuItemSpacing
         previousItem = item
@@ -625,12 +652,12 @@ final class PagingController: NSObject {
   
   private func hasItemBefore(pagingItem: PagingItem?) -> Bool {
     guard let item = pagingItem else { return false }
-    return dataSource?.pagingItemBefore(pagingItem: item) != nil
+    return dataSource?.pagingItemBefore(pagingItem: item, isGenerateLayout: true) != nil
   }
   
   private func hasItemAfter(pagingItem: PagingItem?) -> Bool {
     guard let item = pagingItem else { return false }
-    return dataSource?.pagingItemAfter(pagingItem: item) != nil
+    return dataSource?.pagingItemAfter(pagingItem: item, isGenerateLayout: true) != nil
   }
   
 }

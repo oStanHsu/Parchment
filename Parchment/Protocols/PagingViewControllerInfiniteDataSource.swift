@@ -27,7 +27,7 @@ public protocol PagingViewControllerInfiniteDataSource: class {
   /// - Returns: The `PagingItem` that appears before the given
   /// `PagingItem`, or `nil` to indicate that no more progress can be
   /// made in that direction.
-  func pagingViewController(_: PagingViewController, itemBefore pagingItem: PagingItem) -> PagingItem?
+  func pagingViewController(_: PagingViewController, itemBefore pagingItem: PagingItem, isGenerateLayout: Bool) -> PagingItem?
   
   /// The `PagingItem` that comes after a given `PagingItem`
   ///
@@ -37,5 +37,10 @@ public protocol PagingViewControllerInfiniteDataSource: class {
   /// - Returns: The `PagingItem` that appears after the given
   /// `PagingItem`, or `nil` to indicate that no more progress can be
   /// made in that direction.
-  func pagingViewController(_ : PagingViewController, itemAfter pagingItem: PagingItem) -> PagingItem?
+  func pagingViewController(_ : PagingViewController, itemAfter pagingItem: PagingItem, isGenerateLayout: Bool) -> PagingItem?
+
+    // custom
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerBefore pagingItem: PagingItem) -> UIViewController?
+
+    func pagingViewController(_ pagingViewController: PagingViewController, viewControllerAfter pagingItem: PagingItem) -> UIViewController?
 }

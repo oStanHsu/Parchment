@@ -13,6 +13,7 @@ enum Example: CaseIterable {
   case scroll
   case header
   case multipleCells
+  case BanNN
   
   var title: String {
     switch self {
@@ -40,6 +41,8 @@ enum Example: CaseIterable {
       return "Header above menu"
     case .multipleCells:
       return "Multiple cells"
+    case .BanNN:
+      return "BanNN"
     }
   }
 }
@@ -118,6 +121,8 @@ final class ExamplesViewController: UITableViewController {
       return HeaderViewController(nibName: nil, bundle: nil)
     case .multipleCells:
       return MultipleCellsViewController(nibName: nil, bundle: nil)
+    case .BanNN:
+      return BanNNViewController()
     }
   }
   
