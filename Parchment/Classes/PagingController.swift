@@ -459,10 +459,7 @@ final class PagingController: NSObject {
         if sizeCache.implementsWidthDelegate {
           invalidationContext.invalidateSizes = true
         }
-      } else {
-        print("upcomingPagingItem != nil")
-        }
-      
+      }      
       collectionViewLayout.invalidateLayout(with: invalidationContext)
     }
   }
