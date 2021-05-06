@@ -48,12 +48,15 @@ struct DataPaging {
   var des: String
 }
 
+class BanNNViewController: UIViewController {
 
-func getDatas() -> [DataPaging] {
-  return [
+  var vcs = [ContentViewController2]()
+  var pagingItems = [BanNNPagingItem]()
+
+  var originDatas = [
     DataPaging(title: "Ban", des: "66 activities"),
     DataPaging(title: "Hai", des: "3 activities"),
-    DataPaging(title: "Nguyet", des: "12 activities"),
+//    DataPaging(title: "Nguyet", des: "12 activities"),
 //    DataPaging(title: "Ban1", des: "8 activities"),
 //    DataPaging(title: "Hai1", des: "12 activities"),
 //    DataPaging(title: "Nguyet1", des: "4 activities"),
@@ -61,23 +64,43 @@ func getDatas() -> [DataPaging] {
 //    DataPaging(title: "Hai2", des: "2 activities"),
 //    DataPaging(title: "Nguyet2", des: "1 activitie")
   ]
-}
-
-class BanNNViewController: UIViewController {
-
-  var vcs = [ContentViewController2]()
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    for (i, data) in getDatas().enumerated() {
-      let vc = ContentViewController2(index: i, data: data)
-      vcs.append(vc)
+
+    var dataMenus = originDatas
+    if dataMenus.count == 1 {
+      // hien thi 1 tab
+    } else if dataMenus.count == 2 {
+      dataMenus = dataMenus + dataMenus + dataMenus
+    } else {
+      dataMenus = dataMenus + dataMenus
     }
-    guard vcs.count > 0 else { return }
+
+    for (index, item) in dataMenus.enumerated() {
+      pagingItems.append(BanNNPagingItem(index: index, title: item.title, des: item.des))
+    }
+
+    var initedVCs = [ContentViewController2]()
+    var displayVCs = [ContentViewController2]()
+    for data in dataMenus {
+      if originDatas.count != 2, let initedVC = initedVCs.first(where: { $0.data.title == data.title }) {
+        displayVCs.append(initedVC)
+      } else {
+        let newVC = ContentViewController2(data: data)
+        initedVCs.append(newVC)
+        displayVCs.append(newVC)
+      }
+    }
+
+    self.vcs = displayVCs
+
+    guard displayVCs.count > 0 else { return }
     let pagingViewController = PagingViewController()
-    pagingViewController.menuItemSize = PagingMenuItemSize.sizeToFit(minWidth: UIScreen.main.bounds.width/CGFloat(min(3, vcs.count)), height: 100)
+    let width: CGFloat = displayVCs.count == 1 ? UIScreen.main.bounds.width : UIScreen.main.bounds.width/3
+    pagingViewController.menuItemSize = PagingMenuItemSize.sizeToFit(minWidth: width, height: 100)
     pagingViewController.register(UINib(nibName: "BanNNCollectionViewCell", bundle: nil), for: BanNNPagingItem.self)
-    pagingViewController.delegate = self
+//    pagingViewController.delegate = self
     pagingViewController.menuInteraction = .swipe
     pagingViewController.indicatorColor = .clear
     pagingViewController.borderOptions = .hidden
@@ -98,24 +121,9 @@ class BanNNViewController: UIViewController {
   }
 
   func getPagingItem(index: Int) -> BanNNPagingItem {
-    let data = getDatas()[index]
-    var item = BanNNPagingItem(index: index, title: data.title, des: data.des)
-    item.checkMaxIndex = vcs.count - 1
+    var item = pagingItems[index]
+    item.checkMaxIndex = pagingItems.count - 1
     return item
-  }
-}
-
-extension BanNNViewController: PagingViewControllerDelegate {
-  func pagingViewController(_ pagingViewController: PagingViewController,
-                            didScrollToItem pagingItem: PagingItem,
-                            startingViewController: UIViewController?,
-                            destinationViewController: UIViewController,
-                            transitionSuccessful: Bool) {
-    if let vc = destinationViewController as? ContentViewController2, transitionSuccessful {
-      let index = vc.index
-      let newItem = getPagingItem(index: index)
-      pagingViewController.select(pagingItem: newItem, animated: true)
-    }
   }
 }
 
@@ -152,26 +160,16 @@ extension BanNNViewController: PagingViewControllerInfiniteDataSource {
 
 final class ContentViewController2: UIViewController {
 
-  var index: Int
+  var data: DataPaging
 
-  convenience init(index: Int, data: DataPaging) {
-    self.init(title: "\(index)", content: "\(data.title + "\n" + data.des)")
-  }
-
-  convenience init(title: String) {
-    self.init(title: title, content: title)
-  }
-
-  init(title: String, content: String) {
-    self.index = Int(title) ?? Int.max
+  init(data: DataPaging) {
+    self.data = data
     super.init(nibName: nil, bundle: nil)
-    self.title = title
-
     let label = UILabel(frame: .zero)
     label.font = UIFont.systemFont(ofSize: 50, weight: UIFont.Weight.thin)
     label.textColor = UIColor(red: 95/255, green: 102/255, blue: 108/255, alpha: 1)
     label.textAlignment = .center
-    label.text = content
+    label.text = "\(data.title + "\n" + data.des)"
     label.numberOfLines = 0
     label.sizeToFit()
 

@@ -76,18 +76,6 @@ class BanNNCollectionViewCell: PagingCell {
         guard let pagingItem = pagingItem else { return }
         nameLabel.text = pagingItem.title
         descriptionLabel.text = pagingItem.des
-
-        if isSelected {
-//            nameLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedTitle)
-            nameLabel.textColor = selectedColor
-//            descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedDes)
-//            descriptionLabel.textColor = selectedColor
-        } else {
-//            nameLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedDes)
-            nameLabel.textColor = color
-            descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeDes)
-//            descriptionLabel.textColor = color
-        }
     }
 
     open override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
@@ -97,21 +85,7 @@ class BanNNCollectionViewCell: PagingCell {
                 from: color,
                 to: selectedColor,
                 with: attributes.progress)
-
-//            let fontSizeOfName: CGFloat = (fontSizeTitle * (1 - attributes.progress) + fontSizeSelectedTitle * (attributes.progress))
-//            nameLabel.font = UIFont.systemFont(ofSize: fontSizeOfName)
-//
-//            let fontSizeOfDes: CGFloat = (fontSizeDes * (1 - attributes.progress) + fontSizeSelectedDes * (attributes.progress))
-//            descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeOfDes)
-
             centerConstraint.constant = constant * (1-attributes.progress) + selectedConstant * attributes.progress
-
-//            descriptionLabel.textColor = UIColor.interpolate(
-//                from: color,
-//                to: selectedColor,
-//                with: attributes.progress)
-
-          print("attributes.progress \(attributes.progress)")
         }
     }
 }
