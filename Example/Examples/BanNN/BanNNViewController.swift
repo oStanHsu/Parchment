@@ -54,12 +54,12 @@ func getDatas() -> [DataPaging] {
     DataPaging(title: "Ban", des: "66 activities"),
     DataPaging(title: "Hai", des: "3 activities"),
     DataPaging(title: "Nguyet", des: "12 activities"),
-    DataPaging(title: "Ban1", des: "8 activities"),
-    DataPaging(title: "Hai1", des: "12 activities"),
-    DataPaging(title: "Nguyet1", des: "4 activities"),
-    DataPaging(title: "Ban2", des: "3 activities"),
-    DataPaging(title: "Hai2", des: "2 activities"),
-    DataPaging(title: "Nguyet2", des: "1 activitie")
+//    DataPaging(title: "Ban1", des: "8 activities"),
+//    DataPaging(title: "Hai1", des: "12 activities"),
+//    DataPaging(title: "Nguyet1", des: "4 activities"),
+//    DataPaging(title: "Ban2", des: "3 activities"),
+//    DataPaging(title: "Hai2", des: "2 activities"),
+//    DataPaging(title: "Nguyet2", des: "1 activitie")
   ]
 }
 
@@ -73,8 +73,9 @@ class BanNNViewController: UIViewController {
       let vc = ContentViewController2(index: i, data: data)
       vcs.append(vc)
     }
+    guard vcs.count > 0 else { return }
     let pagingViewController = PagingViewController()
-    pagingViewController.menuItemSize = PagingMenuItemSize.sizeToFit(minWidth: UIScreen.main.bounds.width/3, height: 100)
+    pagingViewController.menuItemSize = PagingMenuItemSize.sizeToFit(minWidth: UIScreen.main.bounds.width/CGFloat(min(3, vcs.count)), height: 100)
     pagingViewController.register(UINib(nibName: "BanNNCollectionViewCell", bundle: nil), for: BanNNPagingItem.self)
     pagingViewController.delegate = self
     pagingViewController.menuInteraction = .swipe
@@ -123,6 +124,9 @@ extension BanNNViewController: PagingViewControllerInfiniteDataSource {
     let item = pagingItem as! BanNNPagingItem
     var index = item.index + 1
     if item.index == vcs.count - 1 {
+      if vcs.count <= 3 {
+        return nil
+      }
       index = 0
     }
     return getPagingItem(index: index)
@@ -132,6 +136,9 @@ extension BanNNViewController: PagingViewControllerInfiniteDataSource {
     let item = pagingItem as! BanNNPagingItem
     var index = item.index - 1
     if item.index == 0 {
+      if vcs.count <= 3 {
+        return nil
+      }
       index = vcs.count - 1
     }
     return getPagingItem(index: index)
