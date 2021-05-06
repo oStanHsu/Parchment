@@ -52,6 +52,9 @@ class BanNNViewController: UIViewController {
 
   var vcs = [ContentViewController2]()
   var pagingItems = [BanNNPagingItem]()
+  let pagingViewController = PagingViewController()
+
+  var currentPagingItem: BanNNPagingItem!
 
   var originDatas = [
     DataPaging(title: "Ban", des: "66 activities"),
@@ -96,14 +99,17 @@ class BanNNViewController: UIViewController {
     self.vcs = displayVCs
 
     guard displayVCs.count > 0 else { return }
-    let pagingViewController = PagingViewController()
+
     let width: CGFloat = displayVCs.count == 1 ? UIScreen.main.bounds.width : UIScreen.main.bounds.width/3
     pagingViewController.menuItemSize = PagingMenuItemSize.sizeToFit(minWidth: width, height: 100)
     pagingViewController.register(UINib(nibName: "BanNNCollectionViewCell", bundle: nil), for: BanNNPagingItem.self)
-//    pagingViewController.delegate = self
-    pagingViewController.menuInteraction = .swipe
+    pagingViewController.delegate = self
+    pagingViewController.menuInteraction = .none
     pagingViewController.indicatorColor = .clear
     pagingViewController.borderOptions = .hidden
+
+    let panGes = UIPanGestureRecognizer(target: self, action: #selector(handPanGes(_:)))
+    pagingViewController.collectionView.addGestureRecognizer(panGes)
 
     // Make sure you add the PagingViewController as a child view
     // controller and constrain it to the edges of the view.
@@ -117,13 +123,61 @@ class BanNNViewController: UIViewController {
     pagingViewController.infiniteDataSource = self
 
     // Set the current date as the selected paging item
+    let item = getPagingItem(index: 0)
     pagingViewController.select(pagingItem: getPagingItem(index: 0))
+    self.currentPagingItem = item
   }
 
   func getPagingItem(index: Int) -> BanNNPagingItem {
     var item = pagingItems[index]
     item.checkMaxIndex = pagingItems.count - 1
     return item
+  }
+
+    var beginGesturePoint: CGPoint?
+    var beginContentOffset: CGFloat?
+    var currentProgress: CGFloat?
+    var nextPagingItem: BanNNPagingItem?
+
+    @objc func handPanGes(_ ges: UIPanGestureRecognizer) {
+      if ges.state == .began {
+        self.beginGesturePoint = ges.location(in: self.view)
+        self.beginContentOffset = pagingViewController.pageViewController.contentOffset
+        pagingViewController.pageViewController.scrollViewWillBeginDragging(pagingViewController.pageViewController.scrollView)
+      } else if ges.state == .changed {
+        let currentPoint = ges.location(in: self.view)
+        if let beginPoint = self.beginGesturePoint {
+          let progress = (beginPoint.x - currentPoint.x)/UIScreen.main.bounds.width
+          if let begin = beginContentOffset {
+            pagingViewController.pageViewController.contentOffset = begin + progress * UIScreen.main.bounds.width
+            pagingViewController.pageViewController.scrollViewDidScroll(pagingViewController.pageViewController.scrollView)
+          }
+
+          self.currentProgress = progress
+
+          if progress > 0 {
+            nextPagingItem = self.pagingViewController(pagingViewController, itemBefore: currentPagingItem) as? BanNNPagingItem
+          } else {
+            nextPagingItem = self.pagingViewController(pagingViewController, itemAfter: currentPagingItem) as? BanNNPagingItem
+          }
+        }
+      } else if ges.state == .ended, let begin = beginContentOffset  {
+        if let progress = self.currentProgress, abs(progress) >= 0.5 {
+            let offset = progress >= 0.5 ? begin + UIScreen.main.bounds.width : begin - UIScreen.main.bounds.width
+            pagingViewController.pageViewController.setContentOffset(offset, animated: true)
+        } else {
+            pagingViewController.pageViewController.setContentOffset(begin, animated: true)
+        }
+        pagingViewController.pageViewController.willEndDragging()
+      }
+    }
+}
+
+extension BanNNViewController: PagingViewControllerDelegate {
+  func pagingViewController(_ pagingViewController: PagingViewController, didScrollToItem pagingItem: PagingItem, startingViewController: UIViewController?, destinationViewController: UIViewController, transitionSuccessful: Bool) {
+    if transitionSuccessful, let pagingItem = pagingItem as? BanNNPagingItem {
+      self.currentPagingItem = pagingItem
+    }
   }
 }
 

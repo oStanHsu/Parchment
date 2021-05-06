@@ -93,7 +93,7 @@ public final class PageViewController: UIViewController {
   
   /// The content offset of the scroll view, adjusted for the current
   /// navigation orientation.
-  private var contentOffset: CGFloat {
+  public var contentOffset: CGFloat {
     get {
       switch options.contentNavigationOrientation {
       case .horizontal:
@@ -194,7 +194,7 @@ public final class PageViewController: UIViewController {
   
   // MARK: Private Methods
   
-  private func setContentOffset(_ value: CGFloat, animated: Bool) {
+  public func setContentOffset(_ value: CGFloat, animated: Bool) {
     scrollView.setContentOffset(point(value), animated: animated)
   }
   
@@ -205,6 +205,10 @@ public final class PageViewController: UIViewController {
     case .vertical:
       return CGPoint(x: 0, y: value)
     }
+  }
+
+  public func willEndDragging() {
+    manager.willEndDragging()
   }
 }
 
