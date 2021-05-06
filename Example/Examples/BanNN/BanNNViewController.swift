@@ -51,15 +51,15 @@ struct DataPaging {
 
 func getDatas() -> [DataPaging] {
   return [
-    DataPaging(title: "Ban", des: "Hello"),
-    DataPaging(title: "Hai", des: "12313"),
-    DataPaging(title: "Nguyet", des: "4"),
-    DataPaging(title: "Ban1", des: "Hello"),
-    DataPaging(title: "Hai1", des: "5"),
-    DataPaging(title: "Nguyet1", des: "4"),
-    DataPaging(title: "Ban2", des: "3"),
-    DataPaging(title: "Hai2", des: "2"),
-    DataPaging(title: "Nguyet2", des: "1")
+    DataPaging(title: "Ban", des: "66 activities"),
+    DataPaging(title: "Hai", des: "3 activities"),
+    DataPaging(title: "Nguyet", des: "12 activities"),
+    DataPaging(title: "Ban1", des: "8 activities"),
+    DataPaging(title: "Hai1", des: "12 activities"),
+    DataPaging(title: "Nguyet1", des: "4 activities"),
+    DataPaging(title: "Ban2", des: "3 activities"),
+    DataPaging(title: "Hai2", des: "2 activities"),
+    DataPaging(title: "Nguyet2", des: "1 activitie")
   ]
 }
 
@@ -69,15 +69,17 @@ class BanNNViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    for (i, _) in getDatas().enumerated() {
-      let vc = ContentViewController2(index: i)
+    for (i, data) in getDatas().enumerated() {
+      let vc = ContentViewController2(index: i, data: data)
       vcs.append(vc)
     }
     let pagingViewController = PagingViewController()
-    pagingViewController.menuItemSize = PagingMenuItemSize.sizeToFit(minWidth: 100, height: 60)
+    pagingViewController.menuItemSize = PagingMenuItemSize.sizeToFit(minWidth: UIScreen.main.bounds.width/3, height: 100)
     pagingViewController.register(UINib(nibName: "BanNNCollectionViewCell", bundle: nil), for: BanNNPagingItem.self)
-    pagingViewController.sizeDelegate = self
     pagingViewController.delegate = self
+    pagingViewController.menuInteraction = .swipe
+    pagingViewController.indicatorColor = .clear
+    pagingViewController.borderOptions = .hidden
 
     // Make sure you add the PagingViewController as a child view
     // controller and constrain it to the edges of the view.
@@ -141,36 +143,12 @@ extension BanNNViewController: PagingViewControllerInfiniteDataSource {
   }
 }
 
-extension BanNNViewController: PagingViewControllerSizeDelegate {
-
-  // We want the size of our paging items to equal the width of the
-  // city title. Parchment does not support self-sizing cells at
-  // the moment, so we have to handle the calculation ourself. We
-  // can access the title string by casting the paging item to a
-  // PagingTitleItem, which is the PagingItem type used by
-  // FixedPagingViewController.
-  func pagingViewController(_ pagingViewController: PagingViewController, widthForPagingItem pagingItem: PagingItem, isSelected: Bool) -> CGFloat {
-    guard let item = pagingItem as? BanNNPagingItem else { return 0 }
-    let insets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-    let size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: pagingViewController.options.menuItemSize.height)
-    let attributes = [NSAttributedString.Key.font: pagingViewController.options.font]
-    let rect = item.title.boundingRect(with: size,
-                                       options: .usesLineFragmentOrigin,
-                                       attributes: attributes,
-                                       context: nil)
-    let width = ceil(rect.width) + insets.left + insets.right
-    return width + 20
-  }
-
-}
-
-
 final class ContentViewController2: UIViewController {
 
   var index: Int
 
-  convenience init(index: Int) {
-    self.init(title: "\(index)", content: "\(index)")
+  convenience init(index: Int, data: DataPaging) {
+    self.init(title: "\(index)", content: "\(data.title + "\n" + data.des)")
   }
 
   convenience init(title: String) {
@@ -187,16 +165,12 @@ final class ContentViewController2: UIViewController {
     label.textColor = UIColor(red: 95/255, green: 102/255, blue: 108/255, alpha: 1)
     label.textAlignment = .center
     label.text = content
+    label.numberOfLines = 0
     label.sizeToFit()
 
     view.addSubview(label)
     view.constrainToEdges(label)
-
-    if index % 2 == 0 {
-      view.backgroundColor = .white
-    } else {
-      view.backgroundColor = .red
-    }
+    view.backgroundColor = hexStringToUIColor(hex: "ECEEFC")
   }
 
   required init?(coder: NSCoder) {

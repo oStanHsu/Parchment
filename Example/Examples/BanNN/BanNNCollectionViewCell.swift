@@ -9,19 +9,45 @@
 import UIKit
 import Parchment
 
-let fontSizeTitle: CGFloat = 10
-let fontSizeSelectedTitle: CGFloat = 20
+func hexStringToUIColor (hex:String) -> UIColor {
+    var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 
-let fontSizeDes: CGFloat = 6
-let fontSizeSelectedDes: CGFloat = 12
+    if (cString.hasPrefix("#")) {
+        cString.remove(at: cString.startIndex)
+    }
 
-var selectedColor = UIColor.black
-var color = UIColor.lightGray
+    if ((cString.count) != 6) {
+        return UIColor.gray
+    }
+
+    var rgbValue:UInt64 = 0
+    Scanner(string: cString).scanHexInt64(&rgbValue)
+
+    return UIColor(
+        red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+        green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+        blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+        alpha: CGFloat(1.0)
+    )
+}
+
+let fontSizeTitle: CGFloat = 24
+let fontSizeSelectedTitle: CGFloat = 24
+
+let fontSizeDes: CGFloat = 15
+let fontSizeSelectedDes: CGFloat = 15
+
+var selectedColor = hexStringToUIColor(hex: "224088") // "UIColor.black"
+var color = hexStringToUIColor(hex: "8495BD")
+
+let constant: CGFloat = 20
+let selectedConstant: CGFloat = 0
 
 class BanNNCollectionViewCell: PagingCell {
 
     @IBOutlet private weak var nameLabel: UILabel!
     @IBOutlet private weak var descriptionLabel: UILabel!
+    @IBOutlet private weak var centerConstraint: NSLayoutConstraint!
 
     private var pagingItem: BanNNPagingItem!
 
@@ -52,15 +78,15 @@ class BanNNCollectionViewCell: PagingCell {
         descriptionLabel.text = pagingItem.des
 
         if isSelected {
-            nameLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedTitle)
+//            nameLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedTitle)
             nameLabel.textColor = selectedColor
-            descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedDes)
-            descriptionLabel.textColor = selectedColor
+//            descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedDes)
+//            descriptionLabel.textColor = selectedColor
         } else {
-            nameLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedDes)
+//            nameLabel.font = UIFont.systemFont(ofSize: fontSizeSelectedDes)
             nameLabel.textColor = color
             descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeDes)
-            descriptionLabel.textColor = color
+//            descriptionLabel.textColor = color
         }
     }
 
@@ -72,16 +98,20 @@ class BanNNCollectionViewCell: PagingCell {
                 to: selectedColor,
                 with: attributes.progress)
 
-            let fontSizeOfName: CGFloat = (fontSizeTitle * (1 - attributes.progress) + fontSizeSelectedTitle * (attributes.progress))
-            nameLabel.font = UIFont.systemFont(ofSize: fontSizeOfName)
+//            let fontSizeOfName: CGFloat = (fontSizeTitle * (1 - attributes.progress) + fontSizeSelectedTitle * (attributes.progress))
+//            nameLabel.font = UIFont.systemFont(ofSize: fontSizeOfName)
+//
+//            let fontSizeOfDes: CGFloat = (fontSizeDes * (1 - attributes.progress) + fontSizeSelectedDes * (attributes.progress))
+//            descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeOfDes)
 
-            let fontSizeOfDes: CGFloat = (fontSizeDes * (1 - attributes.progress) + fontSizeSelectedDes * (attributes.progress))
-            descriptionLabel.font = UIFont.systemFont(ofSize: fontSizeOfDes)
+            centerConstraint.constant = constant * (1-attributes.progress) + selectedConstant * attributes.progress
 
-            descriptionLabel.textColor = UIColor.interpolate(
-                from: color,
-                to: selectedColor,
-                with: attributes.progress)
+//            descriptionLabel.textColor = UIColor.interpolate(
+//                from: color,
+//                to: selectedColor,
+//                with: attributes.progress)
+
+          print("attributes.progress \(attributes.progress)")
         }
     }
 }
