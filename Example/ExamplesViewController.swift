@@ -1,6 +1,7 @@
 import UIKit
 
 enum Example: CaseIterable {
+  case banNN
   case basic
   case selfSizing
   case calendar
@@ -18,6 +19,8 @@ enum Example: CaseIterable {
   
   var title: String {
     switch self {
+    case .banNN:
+      return "BanNN"
     case .basic:
       return "Basic"
     case .selfSizing:
@@ -100,6 +103,8 @@ final class ExamplesViewController: UITableViewController {
   
   private func createViewController(for example: Example) -> UIViewController {
     switch example {
+    case .banNN:
+      return BanNNViewController()
     case .basic:
       return BasicViewController(nibName: nil, bundle: nil)
     case .calendar:

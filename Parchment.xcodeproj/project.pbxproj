@@ -39,6 +39,9 @@
 		3EA04A641C53BFF40054E5E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3EA04A631C53BFF40054E5E0 /* Assets.xcassets */; };
 		3EA04A671C53BFF40054E5E0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3EA04A651C53BFF40054E5E0 /* LaunchScreen.storyboard */; };
 		3EFEFBF71C80B8820023C949 /* PagingIndicatorLayoutAttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEFBF61C80B8820023C949 /* PagingIndicatorLayoutAttributesTests.swift */; };
+		77025AE92643880B0073FE84 /* BanNNCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 77025AE62643880B0073FE84 /* BanNNCollectionViewCell.xib */; };
+		77025AEA2643880B0073FE84 /* BanNNViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77025AE72643880B0073FE84 /* BanNNViewController.swift */; };
+		77025AEB2643880B0073FE84 /* BanNNCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77025AE82643880B0073FE84 /* BanNNCollectionViewCell.swift */; };
 		950ABE422437BD4D00CAD458 /* PagingNavigationOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950ABE412437BD4D00CAD458 /* PagingNavigationOrientation.swift */; };
 		950ABE452438975300CAD458 /* PageViewExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950ABE442438975300CAD458 /* PageViewExampleViewController.swift */; };
 		951E163720A21D3A0055E9D4 /* PagingViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954842601F4251F90072038C /* PagingViewControllerTests.swift */; };
@@ -244,6 +247,9 @@
 		3EA04A681C53BFF40054E5E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EC0184C1C95F993005421AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
 		3EFEFBF61C80B8820023C949 /* PagingIndicatorLayoutAttributesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagingIndicatorLayoutAttributesTests.swift; sourceTree = "<group>"; };
+		77025AE62643880B0073FE84 /* BanNNCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BanNNCollectionViewCell.xib; sourceTree = "<group>"; };
+		77025AE72643880B0073FE84 /* BanNNViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanNNViewController.swift; sourceTree = "<group>"; };
+		77025AE82643880B0073FE84 /* BanNNCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanNNCollectionViewCell.swift; sourceTree = "<group>"; };
 		950ABE412437BD4D00CAD458 /* PagingNavigationOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingNavigationOrientation.swift; sourceTree = "<group>"; };
 		950ABE442438975300CAD458 /* PageViewExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewExampleViewController.swift; sourceTree = "<group>"; };
 		952D802E1E37CC09003DCB18 /* PagingTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagingTransition.swift; sourceTree = "<group>"; };
@@ -551,6 +557,16 @@
 			path = Protocols;
 			sourceTree = "<group>";
 		};
+		77025AE52643880B0073FE84 /* BanNN */ = {
+			isa = PBXGroup;
+			children = (
+				77025AE62643880B0073FE84 /* BanNNCollectionViewCell.xib */,
+				77025AE72643880B0073FE84 /* BanNNViewController.swift */,
+				77025AE82643880B0073FE84 /* BanNNCollectionViewCell.swift */,
+			);
+			path = BanNN;
+			sourceTree = "<group>";
+		};
 		950ABE432438972400CAD458 /* PageViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -585,6 +601,7 @@
 		955453CB2413DBD800923BC8 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				77025AE52643880B0073FE84 /* BanNN */,
 				955453CC2413DBEB00923BC8 /* Basic */,
 				955453CD2413DC5A00923BC8 /* Calendar */,
 				953B8D332416C3C60047BBA1 /* SelfSizing */,
@@ -954,6 +971,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77025AE92643880B0073FE84 /* BanNNCollectionViewCell.xib in Resources */,
 				3EA04A671C53BFF40054E5E0 /* LaunchScreen.storyboard in Resources */,
 				3EA04A641C53BFF40054E5E0 /* Assets.xcassets in Resources */,
 				3EA04A621C53BFF40054E5E0 /* Main.storyboard in Resources */,
@@ -1086,6 +1104,7 @@
 				955453DA2413E11300923BC8 /* ImagePagingCell.swift in Sources */,
 				955453C62413D76C00923BC8 /* ExamplesViewController.swift in Sources */,
 				955453C82413DB7900923BC8 /* UIView+constraints.swift in Sources */,
+				77025AEA2643880B0073FE84 /* BanNNViewController.swift in Sources */,
 				95F83D09261E4F60003B728F /* InfiniteLoopingViewController.swift in Sources */,
 				955453ED2415165800923BC8 /* HeaderViewController.swift in Sources */,
 				955453CF2413DC6900923BC8 /* UIColor+interpolation.swift in Sources */,
@@ -1104,6 +1123,7 @@
 				955453DB2413E11300923BC8 /* ImagesViewController.swift in Sources */,
 				3EA04A5F1C53BFF40054E5E0 /* BasicViewController.swift in Sources */,
 				955453E52413E37700923BC8 /* TableViewController.swift in Sources */,
+				77025AEB2643880B0073FE84 /* BanNNCollectionViewCell.swift in Sources */,
 				955453D02413DCB700923BC8 /* CalendarViewController.swift in Sources */,
 				955453D32413DCB700923BC8 /* DateFormatters.swift in Sources */,
 				3EA04A5D1C53BFF40054E5E0 /* AppDelegate.swift in Sources */,
