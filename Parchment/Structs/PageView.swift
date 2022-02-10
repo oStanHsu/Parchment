@@ -7,7 +7,7 @@ import SwiftUI
 /// check. Found a possible fix here: https://stackoverflow.com/questions/58233454/how-to-use-swiftui-in-framework
 /// This might be related to the issue discussed in this thread:
 /// https://forums.swift.org/t/weak-linking-of-frameworks-with-greater-deployment-targets/26017/24
-#if canImport(SwiftUI) && canImport(Combine)
+#if canImport(SwiftUI) && !(os(iOS) && (arch(i386) || arch(arm)))
 
 /// `PageView` provides a SwiftUI wrapper around `PagingViewController`.
 /// It can be used with any fixed array of `PagingItem`s. Use the
